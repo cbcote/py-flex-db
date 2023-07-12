@@ -1,0 +1,26 @@
+{
+    "mysql": {
+        "host": "localhost",
+        "user": "user",
+        "password": "pass",
+        "database": "db"
+    },
+    "postgres": {
+        "dbname": "mydatabase",
+        "user": "myuser",
+        "password": "mypassword",
+        "host": "localhost",
+        "port": "5432"
+    },
+    "mssql": {
+        "DRIVER": "{ODBC Driver 17 for SQL Server}",
+        "SERVER": "localhost",
+        "DATABASE": "mydatabase",
+        "UID": "myuser",
+        "PWD": "mypassword"
+    },
+    "mongodb": {
+        "host": "localhost",
+        "port": 27017
+    }
+}
