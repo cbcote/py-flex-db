@@ -1,5 +1,6 @@
-from .base import DatabaseConnector
+from flexdb.connectors.base import DatabaseConnector
 import psycopg2
+
 
 class PostgreSQLConnector(DatabaseConnector):
     def connect(self):
@@ -17,15 +18,22 @@ class PostgreSQLConnector(DatabaseConnector):
         self.connection.commit()
         cursor.close()
     
-    def read(self, table, filters):
+    def read(self, table, filters, select_columns=None):
         cursor = self.connection.cursor()
-        columns = ', '.join(filters.keys())
-        placeholders = ', '.join(['%s'] * len(filters))
-        select_query = f'SELECT {columns} FROM {table} WHERE {placeholders}'
+        
+        # If select_columns is None or empty, select all columns using '*'
+        if not select_columns:
+            select_string = '*'
+        else:
+            select_string = ', '.join(select_columns)
+
+        conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()])
+        select_query = f'SELECT {select_string} FROM {table} WHERE {conditions}'
         cursor.execute(select_query, list(filters.values()))
         results = cursor.fetchall()
         cursor.close()
         return results
+
     
     def update(self, table, filters, data):
         cursor = self.connection.cursor()
