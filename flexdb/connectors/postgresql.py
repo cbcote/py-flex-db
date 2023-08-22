@@ -1,5 +1,12 @@
 from flexdb.connectors.base import DatabaseConnector
 import psycopg2
+import pandas as pd
+import polars as pl
+import pyarrow as pa
+import json
+import csv
+from io import StringIO
+from io import BytesIO
 
 
 class PostgreSQLConnector(DatabaseConnector):
@@ -17,8 +24,8 @@ class PostgreSQLConnector(DatabaseConnector):
         cursor.execute(insert_query, list(data.values()))
         self.connection.commit()
         cursor.close()
-    
-    def read(self, table, filters, select_columns=None):
+
+    def read(self, table, filters=None, select_columns=None, output_format="dataframe"):
         cursor = self.connection.cursor()
         
         # If select_columns is None or empty, select all columns using '*'
@@ -27,14 +34,37 @@ class PostgreSQLConnector(DatabaseConnector):
         else:
             select_string = ', '.join(select_columns)
 
-        conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()])
-        select_query = f'SELECT {select_string} FROM {table} WHERE {conditions}'
-        cursor.execute(select_query, list(filters.values()))
-        results = cursor.fetchall()
-        cursor.close()
-        return results
+        # Construct the base query
+        select_query = f'SELECT {select_string} FROM {table}'
 
-    
+        # If filters are provided, add the WHERE clause
+        if filters:
+            conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()])
+            select_query += f' WHERE {conditions}'
+            cursor.execute(select_query, list(filters.values()))
+        else:
+            cursor.execute(select_query)
+
+        results = cursor.fetchall()
+
+        # Get column names from cursor description
+        column_names = [desc[0] for desc in cursor.description]
+
+        cursor.close()
+
+        # Depending on desired output_format, return appropriate data structure
+        if output_format == "dataframe":
+            return pd.DataFrame(results, columns=column_names)
+        elif output_format == "dict":
+            return [dict(zip(column_names, row)) for row in results]
+        elif output_format == "polars":
+            return pl.DataFrame({col: [row[i] for row in results] for i, col in enumerate(column_names)})
+        elif output_format == "arrow":
+            return pa.Table.from_pandas(pd.DataFrame(results, columns=column_names))
+        else:
+            return results
+
+
     def update(self, table, filters, data):
         cursor = self.connection.cursor()
         columns = ', '.join(data.keys())
@@ -52,3 +82,29 @@ class PostgreSQLConnector(DatabaseConnector):
         cursor.execute(delete_query, list(filters.values()))
         self.connection.commit()
         cursor.close()
+
+
+class DataExporter:
+
+    @staticmethod
+    def to_json(data, column_names=None):
+        import json
+        if column_names:
+            return json.dumps([dict(zip(column_names, row)) for row in data])
+        else:
+            return json.dumps(data)
+
+    @staticmethod
+    def to_csv(data, column_names):
+        output = StringIO()
+        writer = csv.writer(output)
+        writer.writerow(column_names)
+        writer.writerows(data)
+        return output.getvalue()
+
+    @staticmethod
+    def to_excel(data, column_names):
+        df = pd.DataFrame(data, columns=column_names)
+        output = BytesIO()
+        df.to_excel(output, index=False, engine='openpyxl')
+        return output.getvalue()
