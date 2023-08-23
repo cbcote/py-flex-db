@@ -5,6 +5,8 @@ import polars as pl
 import pyarrow as pa
 import json
 import csv
+import datetime
+from decimal import Decimal
 from io import StringIO
 from io import BytesIO
 
@@ -87,23 +89,37 @@ class PostgreSQLConnector(DatabaseConnector):
 class DataExporter:
 
     @staticmethod
-    def to_json(data, column_names=None):
-        if column_names:
-            return json.dumps([dict(zip(column_names, row)) for row in data])
-        else:
-            return json.dumps(data)
+    def to_json(data):
+        def custom_serializer(obj):
+            if isinstance(obj, (datetime.date, datetime.datetime)):
+                return obj.isoformat()
+            elif isinstance(obj, Decimal):
+                return float(obj)  # or str(obj) if you prefer string representation
+            raise TypeError(f"Type {type(obj)} not serializable")
+
+        if isinstance(data, pd.DataFrame):
+            data = data.to_dict(orient='records')
+        
+        return json.dumps(data, default=custom_serializer)
 
     @staticmethod
-    def to_csv(data, column_names):
+    def to_csv(data, column_names=None):
+        if isinstance(data, list):
+            data = pd.DataFrame(data, columns=column_names)
+        elif not isinstance(data, pd.DataFrame):
+            data = pd.DataFrame(data)
+
         output = StringIO()
-        writer = csv.writer(output)
-        writer.writerow(column_names)
-        writer.writerows(data)
+        data.to_csv(output, index=False)
         return output.getvalue()
 
     @staticmethod
-    def to_excel(data, column_names):
-        df = pd.DataFrame(data, columns=column_names)
+    def to_excel(data, column_names=None):
+        if isinstance(data, list):
+            data = pd.DataFrame(data, columns=column_names)
+        elif not isinstance(data, pd.DataFrame):
+            data = pd.DataFrame(data)
+
         output = BytesIO()
-        df.to_excel(output, index=False, engine='openpyxl')
+        data.to_excel(output, index=False, engine='openpyxl')
         return output.getvalue()
