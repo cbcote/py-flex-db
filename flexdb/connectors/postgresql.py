@@ -88,7 +88,6 @@ class DataExporter:
 
     @staticmethod
     def to_json(data, column_names=None):
-        import json
         if column_names:
             return json.dumps([dict(zip(column_names, row)) for row in data])
         else:
