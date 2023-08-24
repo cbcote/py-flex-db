@@ -3,26 +3,43 @@ import psycopg2
 import pandas as pd
 import polars as pl
 import pyarrow as pa
+import logging
 
 
 class PostgreSQLConnector(DatabaseConnector):
     """Establishes the database connection."""
     def connect(self):
-        self.connection = psycopg2.connect(**self.config)
+        try:
+            self.connection = psycopg2.connect(**self.config)
+            logging.info('Successfully connected to the database.')
+        except Exception:
+            logging.error(f'Failed to connect to the database: {e}.')
+            raise
     
     def close(self):
         """Closes the database connection."""
-        self.connection.close()
+        try:
+            self.connection.close()
+            logging.info('Database connection closed.')
+        except Exception as e:
+            logging.error(f'Failed to close the database connection: {e}.')
+            raise
 
     def create(self, table, data):
         """Inserts a new record into the specified table."""
-        with self.connection.cursor() as cursor:
-            columns = ', '.join(data.keys())
-            placeholders = ', '.join(['%s'] * len(data))
-            insert_query = f'INSERT INTO {table} ({columns}) VALUES ({placeholders})'
-            cursor.execute(insert_query, list(data.values()))
-            self.connection.commit()
-
+        try:
+            with self.connection.cursor() as cursor:
+                columns = ', '.join(data.keys())
+                placeholders = ', '.join(['%s'] * len(data))
+                insert_query = f'INSERT INTO {table} ({columns}) VALUES ({placeholders})'
+                cursor.execute(insert_query, list(data.values()))
+                self.connection.commit()
+            logging.info(f'Successfully inserted data into {table}.')
+        except Exception as e:
+            logging.error(f'Failed to insert data into {table}: {e}.')
+            self.connection.rollback()
+            raise
+    
     def read(self, table, filters=None, select_columns=None, output_format="dataframe"):
         """Reads records from the specified table."""
         with self.connection.cursor() as cursor:
@@ -57,18 +74,30 @@ class PostgreSQLConnector(DatabaseConnector):
 
     def update(self, table, filters, data):
         """Updates records in the specified table."""
-        with self.connection.cursor() as cursor:
-            columns = ', '.join(data.keys())
-            placeholders = ', '.join(['%s'] * len(data))
-            conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()])
-            update_query = f'UPDATE {table} SET {columns} = {placeholders} WHERE {conditions}'
-            cursor.execute(update_query, list(data.values()) + list(filters.values()))
-            self.connection.commit()
+        try:
+            with self.connection.cursor() as cursor:
+                columns = ', '.join(data.keys())
+                placeholders = ', '.join(['%s'] * len(data))
+                conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()])
+                update_query = f'UPDATE {table} SET {columns} = {placeholders} WHERE {conditions}'
+                cursor.execute(update_query, list(data.values()) + list(filters.values()))
+                self.connection.commit()
+            logging.info(f'Successfully updated data in {table}.')
+        except Exception as e:
+            logging.error(f'Failed to update data in {table}: {e}.')
+            self.connection.rollback()
+            raise
         
     def delete(self, table, filters):
         """Deletes records from the specified table."""
-        with self.connection.cursor() as cursor:
-            conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()])
-            delete_query = f'DELETE FROM {table} WHERE {conditions}'
-            cursor.execute(delete_query, list(filters.values()))
-            self.connection.commit()
+        try:
+            with self.connection.cursor() as cursor:
+                conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()])
+                delete_query = f'DELETE FROM {table} WHERE {conditions}'
+                cursor.execute(delete_query, list(filters.values()))
+                self.connection.commit()
+            logging.info(f'Successfully deleted data from {table}.')
+        except Exception as e:
+            logging.error(f'Failed to delete data from {table}: {e}.')
+            self.connection.rollback()
+            raise
