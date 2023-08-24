@@ -16,13 +16,12 @@ class PostgreSQLConnector(DatabaseConnector):
 
     def create(self, table, data):
         """Inserts a new record into the specified table."""
-        cursor = self.connection.cursor()
-        columns = ', '.join(data.keys())
-        placeholders = ', '.join(['%s'] * len(data))
-        insert_query = f'INSERT INTO {table} ({columns}) VALUES ({placeholders})'
-        cursor.execute(insert_query, list(data.values()))
-        self.connection.commit()
-        cursor.close()
+        with self.connection.cursor() as cursor:
+            columns = ', '.join(data.keys())
+            placeholders = ', '.join(['%s'] * len(data))
+            insert_query = f'INSERT INTO {table} ({columns}) VALUES ({placeholders})'
+            cursor.execute(insert_query, list(data.values()))
+            self.connection.commit()
 
     def read(self, table, filters=None, select_columns=None, output_format="dataframe"):
         """Reads records from the specified table."""
@@ -58,20 +57,18 @@ class PostgreSQLConnector(DatabaseConnector):
 
     def update(self, table, filters, data):
         """Updates records in the specified table."""
-        cursor = self.connection.cursor()
-        columns = ', '.join(data.keys())
-        placeholders = ', '.join(['%s'] * len(data))
-        conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()])
-        update_query = f'UPDATE {table} SET {columns} = {placeholders} WHERE {conditions}'
-        cursor.execute(update_query, list(data.values()) + list(filters.values()))
-        self.connection.commit()
-        cursor.close()
+        with self.connection.cursor() as cursor:
+            columns = ', '.join(data.keys())
+            placeholders = ', '.join(['%s'] * len(data))
+            conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()])
+            update_query = f'UPDATE {table} SET {columns} = {placeholders} WHERE {conditions}'
+            cursor.execute(update_query, list(data.values()) + list(filters.values()))
+            self.connection.commit()
         
     def delete(self, table, filters):
         """Deletes records from the specified table."""
-        cursor = self.connection.cursor()
-        conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()])
-        delete_query = f'DELETE FROM {table} WHERE {conditions}'
-        cursor.execute(delete_query, list(filters.values()))
-        self.connection.commit()
-        cursor.close()
+        with self.connection.cursor() as cursor:
+            conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()])
+            delete_query = f'DELETE FROM {table} WHERE {conditions}'
+            cursor.execute(delete_query, list(filters.values()))
+            self.connection.commit()
