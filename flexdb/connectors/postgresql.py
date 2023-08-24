@@ -59,19 +59,6 @@ class PostgreSQLConnector(DatabaseConnector):
 
         return self.format_output(results, column_names, output_format)
 
-    def format_output(self, results, column_names, output_format):
-        """Formats the output of the read operation based on the specified output_format."""
-        if output_format == "dataframe":
-            return pd.DataFrame(results, columns=column_names)
-        elif output_format == "dict":
-            return [dict(zip(column_names, row)) for row in results]
-        elif output_format == "polars":
-            return pl.DataFrame({col: [row[i] for row in results] for i, col in enumerate(column_names)})
-        elif output_format == "arrow":
-            return pa.Table.from_pandas(pd.DataFrame(results, columns=column_names))
-        else:
-            return results
-
     def update(self, table, filters, data):
         """Updates records in the specified table."""
         try:
