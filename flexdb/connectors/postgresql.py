@@ -6,13 +6,16 @@ import pyarrow as pa
 
 
 class PostgreSQLConnector(DatabaseConnector):
+    """Establishes the database connection."""
     def connect(self):
         self.connection = psycopg2.connect(**self.config)
     
     def close(self):
+        """Closes the database connection."""
         self.connection.close()
 
     def create(self, table, data):
+        """Inserts a new record into the specified table."""
         cursor = self.connection.cursor()
         columns = ', '.join(data.keys())
         placeholders = ', '.join(['%s'] * len(data))
@@ -22,33 +25,26 @@ class PostgreSQLConnector(DatabaseConnector):
         cursor.close()
 
     def read(self, table, filters=None, select_columns=None, output_format="dataframe"):
-        cursor = self.connection.cursor()
-        
-        # If select_columns is None or empty, select all columns using '*'
-        if not select_columns:
-            select_string = '*'
-        else:
-            select_string = ', '.join(select_columns)
+        """Reads records from the specified table."""
+        with self.connection.cursor() as cursor:
+            if not select_columns:
+                select_string = '*'
+            else:
+                select_string = ', '.join(select_columns)
+            select_query = f'SELECT {select_string} FROM {table}'
+            if filters:
+                conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()])
+                select_query += f' WHERE {conditions}'
+                cursor.execute(select_query, list(filters.values()))
+            else:
+                cursor.execute(select_query)
+            results = cursor.fetchall()
+            column_names = [desc[0] for desc in cursor.description]
 
-        # Construct the base query
-        select_query = f'SELECT {select_string} FROM {table}'
+        return self.format_output(results, column_names, output_format)
 
-        # If filters are provided, add the WHERE clause
-        if filters:
-            conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()])
-            select_query += f' WHERE {conditions}'
-            cursor.execute(select_query, list(filters.values()))
-        else:
-            cursor.execute(select_query)
-
-        results = cursor.fetchall()
-
-        # Get column names from cursor description
-        column_names = [desc[0] for desc in cursor.description]
-
-        cursor.close()
-
-        # Depending on desired output_format, return appropriate data structure
+    def format_output(self, results, column_names, output_format):
+        """Formats the output of the read operation based on the specified output_format."""
         if output_format == "dataframe":
             return pd.DataFrame(results, columns=column_names)
         elif output_format == "dict":
@@ -60,8 +56,8 @@ class PostgreSQLConnector(DatabaseConnector):
         else:
             return results
 
-
     def update(self, table, filters, data):
+        """Updates records in the specified table."""
         cursor = self.connection.cursor()
         columns = ', '.join(data.keys())
         placeholders = ', '.join(['%s'] * len(data))
@@ -72,6 +68,7 @@ class PostgreSQLConnector(DatabaseConnector):
         cursor.close()
         
     def delete(self, table, filters):
+        """Deletes records from the specified table."""
         cursor = self.connection.cursor()
         conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()])
         delete_query = f'DELETE FROM {table} WHERE {conditions}'
