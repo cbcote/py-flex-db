@@ -1,18 +1,3 @@
-# trigger:
-#    - main
-
-# pool:
-#    vmImage: BROTE
-
-# jobs:
-#    - job: VMDeploy
-#      displayName: Deploy to VM
-#      environment: fi-postgres-dev
-#       name: fi-postgres-dev
-#       resourceName: BROTE
-#       resourceType: virtualMachine
-#       tags: windows,dev
-   
 trigger: 
 - main
 
@@ -28,6 +13,7 @@ jobs:
     resourceName: BROTE # only deploy to the VM resource named BROTE
     tags: windows,dev
 - job: PythonBuild
+  displayName: Python build
   steps:
   - task: UsePythonVersion@0
     inputs:
