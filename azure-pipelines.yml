@@ -18,8 +18,10 @@ jobs:
             steps:
             - task: UsePythonVersion@0
               inputs:
-               versionSpec: '3.8'
-               addToPath: true
+                versionSpec: '3.8'
+                disableDownloadFromRegistry: true
+                addToPath: true
+                architecture: 'x64'
 
             - script: pip install -r requirements.txt
               displayName: 'Install dependencies'
