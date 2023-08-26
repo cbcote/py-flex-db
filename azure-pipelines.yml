@@ -2,7 +2,7 @@ trigger:
 - main
 
 pool: 
-   vmImage: BROTE
+   vmImage: build-agent
 
 jobs:
 - deployment: VMDeploy
