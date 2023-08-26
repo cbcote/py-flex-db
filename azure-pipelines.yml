@@ -1,3 +1,18 @@
+# trigger:
+#    - main
+
+# pool:
+#    vmImage: BROTE
+
+# jobs:
+#    - job: VMDeploy
+#      displayName: Deploy to VM
+#      environment: fi-postgres-dev
+#       name: fi-postgres-dev
+#       resourceName: BROTE
+#       resourceType: virtualMachine
+#       tags: windows,dev
+   
 trigger: 
 - main
 
@@ -8,26 +23,19 @@ jobs:
 - deployment: VMDeploy
   displayName: Deploy to VM
   environment: 
-   name: fi-postgres-dev
-   resourceName: BROTE
-   resourceType: virtualMachine
-  strategy:
-     runOnce:
-        deploy:   
-          steps:
-            - script: echo "Hello world"
-- job: 'Test'
-  displayName: python-versions
-  strategy:
-   matrix:
-      Python38:
-         'python.version': '3.8'
-      Python39:
-         'python.version': '3.9'
-      Python310:
-         'python.version': '3.10'
-   
-   steps:
-   - task: UsePythonVersion@0
-     inputs:
-      versionSpec: '$(python.version)'
+    name: fi-postgres-dev
+    resourceType: virtualMachine
+    resourceName: BROTE # only deploy to the VM resource named BROTE
+    tags: windows,dev
+- job: PythonBuild
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+     versionSpec: '3.8'
+     addToPath: true
+
+  - script: pip install -r requirements.txt
+    displayName: 'Install dependencies'
+
+  - script: python -m unittest discover
+    displayName: 'Run tests'
