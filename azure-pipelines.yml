@@ -12,18 +12,17 @@ jobs:
     resourceType: virtualMachine
     resourceName: BROTE # only deploy to the VM resource named BROTE
     tags: windows,dev
-- job: PythonBuild
-  displayName: Python build
-  pool:
-   vmImage: 'BROTE'
-  steps:
-  - task: UsePythonVersion@0
-    inputs:
-     versionSpec: '3.8'
-     addToPath: true
+  strategy:
+      runOnce:
+         deploy:
+            steps:
+            - task: UsePythonVersion@0
+              inputs:
+               versionSpec: '3.8'
+               addToPath: true
 
-  - script: pip install -r requirements.txt
-    displayName: 'Install dependencies'
+            - script: pip install -r requirements.txt
+              displayName: 'Install dependencies'
 
-  - script: python -m unittest discover
-    displayName: 'Run tests'
+            - script: python -m unittest discover
+              displayName: 'Run tests'
