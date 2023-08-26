@@ -1,0 +1,17 @@
+trigger:
+- main  # this pipeline will be triggered when changes are pushed to the main branch
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.8'
+    addToPath: true
+
+- script: pip install -r requirements.txt
+  displayName: 'Install dependencies'
+
+- script: python -m unittest discover
+  displayName: 'Run tests'
