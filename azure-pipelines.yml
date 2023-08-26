@@ -1,19 +1,18 @@
-trigger:
-- main  # this pipeline will be triggered when changes are pushed to the main branch
+trigger: 
+- main
 
-pool:
-  name: 'Default'
-  demands:
-    -agent.name -equals BROTE
+pool: 
+   vmImage: BROTE
 
-steps:
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '3.8'
-    addToPath: true
-
-- script: pip install -r requirements.txt
-  displayName: 'Install dependencies'
-
-- script: python -m unittest discover
-  displayName: 'Run tests'
+jobs:
+- deployment: VMDeploy
+  displayName: Deploy to VM
+  environment: 
+   name: fi-postgres-dev
+   resourceName: fi-postgres-dev
+   resourceType: virtualMachine
+  strategy:
+     runOnce:
+        deploy:   
+          steps:
+            - script: echo "Hello world"
