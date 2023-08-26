@@ -2,7 +2,7 @@ trigger:
 - main  # this pipeline will be triggered when changes are pushed to the main branch
 
 pool:
-  vmImage: 'windows'latest
+  vmImage: 'windows-latest'
 
 steps:
 - task: UsePythonVersion@0
