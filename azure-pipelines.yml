@@ -14,6 +14,8 @@ jobs:
     tags: windows,dev
 - job: PythonBuild
   displayName: Python build
+  pool:
+   vmImage: 'BROTE'
   steps:
   - task: UsePythonVersion@0
     inputs:
