@@ -9,7 +9,7 @@ class PostgreSQLConnector(DatabaseConnector):
         try:
             self.connection = psycopg2.connect(**self.config)
             logging.info('Successfully connected to the database.')
-        except Exception:
+        except Exception as e:
             logging.error(f'Failed to connect to the database: {e}.')
             raise
     
@@ -40,29 +40,29 @@ class PostgreSQLConnector(DatabaseConnector):
     def read(self, table=None, filters=None, select_columns=None, output_format="dataframe", raw_sql=None):
         """Reads records from the specified table."""
         
-        with self.connection.cursor() as cursor:
-            
-            if raw_sql:
-                cursor.execute(raw_sql)
+        if not raw_sql:
+            if not select_columns:
+                select_string = '*'
             else:
-                if not select_columns:
-                    select_string = '*'
-                else:
-                    select_string = ', '.join(select_columns)
+                select_string = ', '.join(select_columns)
             
             select_query = f'SELECT {select_string} FROM {table}'
             
             if filters:
                 conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()])
                 select_query += f' WHERE {conditions}'
-                cursor.execute(select_query, list(filters.values()))
+
+        with self.connection.cursor() as cursor:
+            if raw_sql:
+                cursor.execute(raw_sql)
             else:
-                cursor.execute(select_query)
-            
+                cursor.execute(select_query, list(filters.values()) if filters else None)
+                
             results = cursor.fetchall()
             column_names = [desc[0] for desc in cursor.description]
 
         return self.format_output(results, column_names, output_format)
+
 
     def update(self, table, filters, data):
         """Updates records in the specified table."""
