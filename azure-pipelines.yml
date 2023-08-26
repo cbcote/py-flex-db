@@ -9,7 +9,7 @@ jobs:
   displayName: Deploy to VM
   environment: 
    name: fi-postgres-dev
-   resourceName: fi-postgres-dev
+   resourceName: BROTE
    resourceType: virtualMachine
   strategy:
      runOnce:
