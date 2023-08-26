@@ -1,4 +1,7 @@
-class DatabaseConnector:
+from abc import ABC, abstractmethod
+
+
+class DatabaseConnector(ABC):
     def __init__(self, config) -> None:
         self.config = config
         self.format_functions = {
@@ -8,22 +11,32 @@ class DatabaseConnector:
             "arrow": self.format_arrow,
         }
     
+    @abstractmethod
     def connect(self):
         raise NotImplementedError
     
+    @abstractmethod
     def close(self):
         raise NotImplementedError
     
+    @abstractmethod
     def create(self, table, data):
         raise NotImplementedError
     
+    @abstractmethod
     def read(self, table, filters):
         raise NotImplementedError
     
+    @abstractmethod
     def update(self, table, filters, data):
         raise NotImplementedError
     
+    @abstractmethod
     def delete(self, table, filters):
+        raise NotImplementedError
+    
+    @abstractmethod
+    def list_tables(self):
         raise NotImplementedError
 
     def format_output(self, results, column_names, output_format):
