@@ -28,7 +28,7 @@ steps:
 
 - script: |
     # Fetch the token
-    ACCESS_TOKEN=az account get-access-token --resource=https://ossrdbms-aad.database.windows.net
+    SETX ACCESS_TOKEN=az account get-access-token --resource=https://ossrdbms-aad.database.windows.net
 
 - script: |
     pip install pytest pytest-azurepipelines
