@@ -1,8 +1,7 @@
 trigger: 
 - main
 
-pool:
-   vmImage: build-agent
+pool: Default
 
 strategy:
   matrix:
