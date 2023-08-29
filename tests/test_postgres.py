@@ -5,17 +5,18 @@ from flexdb.connectors.postgresql import PostgreSQLConnector
 import os
 
 
+
+
 class TestPostgreSQLConnector(unittest.TestCase):
     
     def test_connect(self):
-        script_dir = os.path.dirname(__file__)
-
-        yaml_path = os.path.join(script_dir, '../flexdb/config/config.yaml')
+        config = {
+            'host': os.environ.get("POSTGRES_HOST"),
+            'port': 5432,
+            'dbname': os.environ.get("POSTGRES_DB"),
+            'user': os.environ.get("POSTGRES_USER"),
+            'password': get_access_token()
+        }
         
-        with open(yaml_path, 'r') as f:
-            config = yaml.safe_load(f)
-            postgres_config = config['postgresql']
-            postgres_config['password'] = get_access_token()
-        
-        connector = PostgreSQLConnector(postgres_config)
+        connector = PostgreSQLConnector(config)
         self.assertIsNone(connector.connect())  # Replace with an actual test
