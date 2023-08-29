@@ -12,6 +12,8 @@ steps:
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '$(python.version)'
+    addToPath: true
+    architecture: 'x64'
   displayName: 'Use Python $(python.version)'
 
 - script: |
