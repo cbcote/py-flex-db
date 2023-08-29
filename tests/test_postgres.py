@@ -14,7 +14,8 @@ class TestPostgreSQLConnector(unittest.TestCase):
         
         with open(yaml_path, 'r') as f:
             config = yaml.safe_load(f)
-            config['postgresql']['password'] = get_access_token()
+            postgres_config = config['postgresql']
+            postgres_config['password'] = get_access_token()
         
-        connector = PostgreSQLConnector(config)
+        connector = PostgreSQLConnector(postgres_config)
         self.assertIsNone(connector.connect())  # Replace with an actual test
