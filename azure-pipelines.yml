@@ -3,6 +3,11 @@ trigger:
 
 pool: Default
 
+variables:
+  POSTGRES_HOST: $(POSTGRES_HOST)
+  POSTGRES_DB: $(POSTGRES_DB)
+  POSTGRES_USER: $(POSTGRES_USER)
+
 strategy:
   matrix:
     Python310:
@@ -22,6 +27,14 @@ steps:
   displayName: 'Install dependencies'
 
 - script: |
+    # Fetch the token
+    ACCESS_TOKEN=$(az account get-access-token --resource=https://ossrdbms-aad.database.windows.net)
+
+- script: |
     pip install pytest pytest-azurepipelines
+    export POSTGRES_HOST=$(POSTGRES_HOST)
+    export POSTGRES_DB=$(POSTGRES_DB)
+    export POSTGRES_USER=$(POSTGRES_USER)
+    export ACCESS_TOKEN=$(ACCESS_TOKEN)
     pytest
   displayName: 'pytest'
