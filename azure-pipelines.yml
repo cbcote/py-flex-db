@@ -3,10 +3,10 @@ trigger:
 
 pool: Default
 
-variables:
-  POSTGRES_HOST: $(POSTGRES_HOST)
-  POSTGRES_DB: $(POSTGRES_DB)
-  POSTGRES_USER: $(POSTGRES_USER)
+# variables:
+#   POSTGRES_HOST: $(POSTGRES_HOST)
+#   POSTGRES_DB: $(POSTGRES_DB)
+#   POSTGRES_USER: $(POSTGRES_USER)
 
 strategy:
   matrix:
