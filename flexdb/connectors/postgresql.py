@@ -24,6 +24,7 @@ class PostgreSQLConnector(DatabaseConnector):
 
     def create(self, table, data):
         """Inserts a new record into the specified table."""
+        # TODO: Add support for inserting multiple records at once
         try:
             with self.connection.cursor() as cursor:
                 columns = ', '.join(data.keys())
@@ -39,6 +40,7 @@ class PostgreSQLConnector(DatabaseConnector):
     
     def read(self, table=None, filters=None, select_columns=None, output_format="dataframe", raw_sql=None):
         """Reads records from the specified table."""
+        # TODO: Add support for jsonb
         
         if not raw_sql:
             if not select_columns:
