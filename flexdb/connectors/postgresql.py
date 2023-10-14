@@ -23,7 +23,16 @@ class PostgreSQLConnector(DatabaseConnector):
             raise
 
     def create(self, table, data):
-        """Inserts a new record into the specified table."""
+        """
+        Inserts a new record into the specified table.
+        
+        Parameters
+        ----------
+        table : str
+            Name of the table to insert into.
+        data : dict
+            Dictionary of column names and values to insert.
+        """
         # TODO: Add support for inserting multiple records at once
         try:
             with self.connection.cursor() as cursor:
@@ -88,7 +97,18 @@ class PostgreSQLConnector(DatabaseConnector):
 
 
     def update(self, table, filters, data):
-        """Updates records in the specified table."""
+        """
+        Updates records in the specified table.
+        
+        Parameters
+        ----------
+        table : str
+            Name of the table to update.
+        filters : dict
+            Dictionary of column names and values to filter the results by.
+        data : dict
+            Dictionary of column names and values to update.
+        """
         try:
             with self.connection.cursor() as cursor:
                 columns = ', '.join(data.keys())
@@ -104,7 +124,16 @@ class PostgreSQLConnector(DatabaseConnector):
             raise
         
     def delete(self, table, filters):
-        """Deletes records from the specified table."""
+        """
+        Deletes records from the specified table.
+        
+        Parameters
+        ----------
+        table : str
+            Name of the table to delete from.
+        filters : dict
+            Dictionary of column names and values to filter the results by.
+        """
         try:
             with self.connection.cursor() as cursor:
                 conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()])
