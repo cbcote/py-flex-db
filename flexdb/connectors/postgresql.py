@@ -39,8 +39,29 @@ class PostgreSQLConnector(DatabaseConnector):
             raise
     
     def read(self, table=None, filters=None, select_columns=None, output_format="dataframe", raw_sql=None):
-        """Reads records from the specified table."""
-        # TODO: Add support for jsonb
+        """
+        Reads records from the specified table.
+        
+        Parameters
+        ----------
+        table : str
+            Name of the table to read from.
+        filters : dict
+            Dictionary of column names and values to filter the results by.
+        select_columns : list
+            List of column names to select.
+        output_format : str
+            Format of the output. Options are "dataframe", "list", and "dict".
+        raw_sql : str
+            Raw SQL query to execute. If this is provided, the table, filters, and select_columns parameters are ignored.
+        
+        Returns
+        -------
+        results : list or dict or pandas.DataFrame
+            Results of the query in the specified format.
+        column_names : list
+            List of column names in the results.
+        """
         
         if not raw_sql:
             if not select_columns:
