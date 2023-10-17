@@ -19,6 +19,21 @@ class MySQLConnector(DatabaseConnector):
         cursor.close()
     
     def read(self, table, filters):
+        """
+        Reads records from the specified table.
+        
+        Parameters
+        ----------
+        table : str
+            Name of the table to read from.
+        filters : dict
+            Dictionary of column names and values to filter the results by.
+        
+        Returns
+        -------
+        results : list
+            List of records from the specified table.
+        """
         cursor = self.connection.cursor()
         columns = ', '.join(filters.keys())
         placeholders = ', '.join(['%s'] * len(filters))
