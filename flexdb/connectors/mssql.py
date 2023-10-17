@@ -10,6 +10,20 @@ class MsSQLConnector(DatabaseConnector):
         self.connection.close()
 
     def create(self, table, data):
+        """
+        Inserts a new record into the specified table.
+        
+        Parameters
+        ----------
+        table : str
+            Name of the table to insert into.
+        data : dict
+            Dictionary of column names and values to insert.
+        
+        Returns
+        -------
+        results : list
+            List of records from the specified table."""
         cursor = self.connection.cursor()
         columns = ', '.join(data.keys())
         placeholders = ', '.join(['?'] * len(data))
@@ -19,6 +33,21 @@ class MsSQLConnector(DatabaseConnector):
         cursor.close()
     
     def read(self, table, filters):
+        """
+        Reads records from the specified table.
+        
+        Parameters
+        ----------
+        table : str
+            Name of the table to read from.
+        filters : dict
+            Dictionary of column names and values to filter the results by.
+        
+        Returns
+        -------
+        results : list
+            List of records from the specified table.
+        """
         cursor = self.connection.cursor()
         columns = ', '.join(filters.keys())
         placeholders = ', '.join(['?'] * len(filters))
@@ -29,6 +58,23 @@ class MsSQLConnector(DatabaseConnector):
         return results
     
     def update(self, table, filters, data):
+        """
+        Updates records in the specified table.
+        
+        Parameters
+        ----------
+        table : str
+            Name of the table to update.
+        filters : dict
+            Dictionary of column names and values to filter the records by.
+        data : dict
+            Dictionary of column names and values to update.
+        
+        Returns
+        -------
+        results : list
+            List of records from the specified table.
+        """
         cursor = self.connection.cursor()
         columns = ', '.join(data.keys())
         placeholders = ', '.join(['?'] * len(data))
