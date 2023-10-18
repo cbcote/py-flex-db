@@ -20,6 +20,16 @@ class OracleConnector(DatabaseConnector):
         cursor.close()
 
     def read(self, table, filters):
+        """
+        Reads records from the specified table.
+        
+        Parameters
+        ----------
+        table : str
+            Name of the table to read from.
+        filters : dict
+            Dictionary of column names and values to filter the results by.
+        """
         cursor = self.connection.cursor()
         filter_str = ' AND '.join([f"{k} = :{i+1}" for i, k in enumerate(filters.keys())])
         select_query = f"SELECT * FROM {table} WHERE {filter_str}"
@@ -29,6 +39,19 @@ class OracleConnector(DatabaseConnector):
         return result
 
     def update(self, table, filters, data):
+        """
+        Updates records in the specified table.
+        
+        Parameters
+        ----------
+        table : str
+            Name of the table to update.
+        filters : dict
+            Dictionary of column names and values to filter the results by.
+        data : dict
+            Dictionary of column names and values to update.
+        
+        """
         cursor = self.connection.cursor()
         filter_str = ' AND '.join([f"{k} = :{i+1+len(data)}" for i, k in enumerate(filters.keys())])
         data_str = ', '.join([f"{k} = :{i+1}" for i, k in enumerate(data.keys())])
@@ -38,6 +61,16 @@ class OracleConnector(DatabaseConnector):
         cursor.close()
 
     def delete(self, table, filters):
+        """
+        Deletes records from the specified table.
+        
+        Parameters
+        ----------
+        table : str
+            Name of the table to delete from.
+        filters : dict
+            Dictionary of column names and values to filter the results by.
+        """
         cursor = self.connection.cursor()
         filter_str = ' AND '.join([f"{k} = :{i+1}" for i, k in enumerate(filters.keys())])
         delete_query = f"DELETE FROM {table} WHERE {filter_str}"
