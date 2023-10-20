@@ -61,6 +61,16 @@ class MongoDbConnector(DatabaseConnector):
         return result.modified_count
 
     def delete(self, collection, filters):
+        """
+        :param collection: collection name
+        :param filters: dict of filters
+        :return: number of deleted documents
+        
+        Example:
+        >>> db = MongoDbConnector()
+        >>> db.connect()
+        >>> db.delete('users', {'name': 'John'})
+        """
         db = self.connection['mydatabase']  # replace 'mydatabase' with your db name
         coll = db[collection]
         result = coll.delete_one(filters)
