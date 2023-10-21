@@ -14,6 +14,12 @@ class DataExporter:
         }
 
     def export_data(self, data, format_type, filename, **kwargs):
+        """
+        :param data: list of dicts, pandas dataframe, or pyarrow table
+        :param format_type: json, csv, or excel
+        :param filename: filename to save to
+        :return: None
+        """
         exporter_fn = self.format_map.get(format_type)
         if exporter_fn:
             exporter_fn(data, filename, **kwargs)
@@ -22,6 +28,11 @@ class DataExporter:
             return None
 
     def to_json(self, data, filename):
+        """
+        :param data: list of dicts, pandas dataframe, or pyarrow table
+        :param filename: filename to save to
+        :return: None
+        """
         def custom_serializer(obj):
             if isinstance(obj, (date, datetime)):
                 return obj.isoformat()
@@ -42,6 +53,11 @@ class DataExporter:
             logging.error(f"An error occurred while exporting to JSON: {e}")
 
     def to_csv(self, data, filename):
+        """
+        :param data: list of dicts, pandas dataframe, or pyarrow table
+        :param filename: filename to save to
+        :return: None
+        """
         try:
             data = self.convert_to_dataframe(data)
             data.to_csv(filename, index=False)
@@ -49,6 +65,11 @@ class DataExporter:
             logging.error(f"An error occurred while exporting to CSV: {e}")
 
     def to_excel(self, data, filename):
+        """
+        :param data: list of dicts, pandas dataframe, or pyarrow table
+        :param filename: filename to save to
+        :return: None
+        """
         try:
             data = self.convert_to_dataframe(data)
             data.to_excel(filename, index=False, engine='openpyxl')
@@ -57,6 +78,10 @@ class DataExporter:
 
     @staticmethod
     def convert_to_dataframe(data):
+        """
+        :param data: list of dicts, pandas dataframe, or pyarrow table
+        :return: pandas dataframe
+        """
         if isinstance(data, list):
             return pd.DataFrame(data)
         elif isinstance(data, pa.lib.Table):
