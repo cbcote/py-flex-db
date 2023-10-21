@@ -6,9 +6,9 @@
         "database": "db"
     },
     "postgres": {
-        "dbname": "mydatabase",
-        "user": "myuser",
-        "password": "mypassword",
+        "dbname": "dvdrental",
+        "user": "postgres",
+        "password": "postgres",
         "host": "localhost",
         "port": "5432"
     },
