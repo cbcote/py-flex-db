@@ -10,6 +10,7 @@ import os
 class TestPostgreSQLConnector(unittest.TestCase):
     
     def test_connect(self):
+        """Connection test"""
         config = {
             'host': os.environ.get("POSTGRES_HOST"),
             'port': 5432,
