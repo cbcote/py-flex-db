@@ -4,9 +4,11 @@ from pymongo import MongoClient
 
 class MongoDbConnector(DatabaseConnector):
     def connect(self):
+        """Connects to the database using the specified configuration."""
         self.connection = MongoClient(**self.config)
     
     def close(self):
+        """Closes the connection to the database."""
         self.connection.close()
 
     def create(self, collection, data):
