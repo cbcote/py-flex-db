@@ -4,9 +4,11 @@ import pyodbc
 
 class MsSQLConnector(DatabaseConnector):
     def connect(self):
+        """Connects to the database using the specified configuration."""
         self.connection = pyodbc.connect(**self.config)
     
     def close(self):
+        """Closes the connection to the database."""
         self.connection.close()
 
     def create(self, table, data):
@@ -85,6 +87,16 @@ class MsSQLConnector(DatabaseConnector):
         cursor.close()
         
     def delete(self, table, filters):
+        """
+        Deletes records from the specified table.
+        
+        Parameters
+        ----------
+        table : str
+            Name of the table to delete from.
+        filters : dict
+            Dictionary of column names and values to filter the records by.
+        """
         cursor = self.connection.cursor()
         conditions = ' AND '.join([f'{key} = ?' for key in filters.keys()])
         delete_query = f'DELETE FROM {table} WHERE {conditions}'
