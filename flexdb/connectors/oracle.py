@@ -5,12 +5,24 @@ import oracledb
 class OracleConnector(DatabaseConnector):
     
     def connect(self):
+        """Connects to the database using the specified configuration."""
         self.connection = oracledb.connect(**self.config)
     
     def close(self):
+        """Closes the connection to the database."""
         self.connection.close()
     
     def create(self, table, data):
+        """
+        Inserts a new record into the specified table.
+        
+        Parameters
+        ----------
+        table : str
+            Name of the table to insert into.
+        data : dict
+            Dictionary of column names and values to insert.
+        """
         cursor = self.connection.cursor()
         placeholders = ', '.join([':{}'.format(i + 1) for i in range(len(data))])
         columns = ', '.join(data.keys())
