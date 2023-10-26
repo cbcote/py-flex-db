@@ -24,8 +24,8 @@ class MySQLConnector(DatabaseConnector):
         """
         cursor = self.connection.cursor()
         columns = ', '.join(data.keys())
-        placeholders = ', '.join(['%s'] * len(data))
-        insert_query = f'INSERT INTO {table} ({columns}) VALUES ({placeholders})'
+        placeholders = ', '.join(['%s'] * len(data)) # %s is a placeholder for a value
+        insert_query = f'INSERT INTO {table} ({columns}) VALUES ({placeholders})' # INSERT INTO table (column1, column2) VALUES (%s, %s)
         cursor.execute(insert_query, list(data.values()))
         self.connection.commit()
         cursor.close()
@@ -48,8 +48,8 @@ class MySQLConnector(DatabaseConnector):
         """
         cursor = self.connection.cursor()
         columns = ', '.join(filters.keys())
-        placeholders = ', '.join(['%s'] * len(filters))
-        select_query = f'SELECT {columns} FROM {table} WHERE {placeholders}'
+        placeholders = ', '.join(['%s'] * len(filters)) # %s is a placeholder for a value
+        select_query = f'SELECT {columns} FROM {table} WHERE {placeholders}' # SELECT column1, column2 FROM table WHERE column1 = %s AND column2 = %s
         cursor.execute(select_query, list(filters.values()))
         results = cursor.fetchall()
         cursor.close()
@@ -59,16 +59,16 @@ class MySQLConnector(DatabaseConnector):
         cursor = self.connection.cursor()
         columns = ', '.join(data.keys())
         placeholders = ', '.join(['%s'] * len(data))
-        conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()])
-        update_query = f'UPDATE {table} SET {columns} = {placeholders} WHERE {conditions}'
+        conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()]) # column1 = %s AND column2 = %s
+        update_query = f'UPDATE {table} SET {columns} = {placeholders} WHERE {conditions}' # UPDATE table SET column1 = %s, column2 = %s WHERE column1 = %s AND column2 = %s
         cursor.execute(update_query, list(data.values()) + list(filters.values()))
         self.connection.commit()
         cursor.close()
         
     def delete(self, table, filters):
         cursor = self.connection.cursor()
-        conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()])
-        delete_query = f'DELETE FROM {table} WHERE {conditions}'
+        conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()]) # column1 = %s AND column2 = %s
+        delete_query = f'DELETE FROM {table} WHERE {conditions}' # DELETE FROM table WHERE column1 = %s AND column2 = %s
         cursor.execute(delete_query, list(filters.values()))
         self.connection.commit()
         cursor.close()
