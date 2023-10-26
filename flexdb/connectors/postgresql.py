@@ -91,9 +91,9 @@ class PostgreSQLConnector(DatabaseConnector):
                 cursor.execute(select_query, list(filters.values()) if filters else None)
                 
             results = cursor.fetchall()
-            column_names = [desc[0] for desc in cursor.description]
+            column_names = [desc[0] for desc in cursor.description] # get column names from the cursor description
 
-        return self.format_output(results, column_names, output_format)
+        return self.format_output(results, column_names, output_format) # format the output based on the specified format
 
 
     def update(self, table, filters, data):
@@ -114,7 +114,7 @@ class PostgreSQLConnector(DatabaseConnector):
                 columns = ', '.join(data.keys())
                 placeholders = ', '.join(['%s'] * len(data))
                 conditions = ' AND '.join([f'{key} = %s' for key in filters.keys()])
-                update_query = f'UPDATE {table} SET {columns} = {placeholders} WHERE {conditions}'
+                update_query = f'UPDATE {table} SET {columns} = {placeholders} WHERE {conditions}' # UPDATE table SET column1 = %s, column2 = %s WHERE column1 = %s AND column2 = %s
                 cursor.execute(update_query, list(data.values()) + list(filters.values()))
                 self.connection.commit()
             logging.info(f'Successfully updated data in {table}.')
@@ -161,7 +161,7 @@ class PostgreSQLConnector(DatabaseConnector):
                 cursor.execute(query)
                 tables = cursor.fetchall()
                 # Unpack the list of tuples into a list of table names
-                table_names = [table[0] for table in tables]
+                table_names = [table[0] for table in tables] # table[0] is the first element of the tuple
                 logging.info(f"Tables in database: {table_names}")
                 return table_names
         except Exception as e:
