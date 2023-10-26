@@ -42,7 +42,7 @@ class MongoDbConnector(DatabaseConnector):
         """
         db = self.connection['mydatabase']  # replace 'mydatabase' with your db name
         coll = db[collection]
-        result = coll.find(filters)
+        result = coll.find(filters) # you can also use coll.find_one(filters) to get only one document
         return list(result)
 
     def update(self, collection, filters, data):
@@ -75,5 +75,5 @@ class MongoDbConnector(DatabaseConnector):
         """
         db = self.connection['mydatabase']  # replace 'mydatabase' with your db name
         coll = db[collection]
-        result = coll.delete_one(filters)
+        result = coll.delete_one(filters) # you can also use coll.delete_many(filters) to delete multiple documents
         return result.deleted_count
