@@ -20,4 +20,4 @@ class TestPostgreSQLConnector(unittest.TestCase):
         }
         
         connector = PostgreSQLConnector(config)
-        self.assertIsNone(connector.connect())  # Replace with an actual test
+        self.assertIsNone(connector.connect())
