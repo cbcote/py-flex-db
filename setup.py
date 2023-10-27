@@ -1,5 +1,3 @@
-# Write setup file for pyflexdb package
-
 from setuptools import setup, find_packages
 
 setup(
