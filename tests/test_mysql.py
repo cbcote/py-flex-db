@@ -4,7 +4,7 @@ from flexdb.connectors.mysql import MySQLConnector
 import os
 
 
-class TestMsSQLConnector(unittest.TestCase):
+class MySQLConnector(unittest.TestCase):
     
     def test_connect(self):
         """Connection test"""
