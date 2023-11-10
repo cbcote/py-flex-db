@@ -1,6 +1,7 @@
 from flexdb.connectors.base import DatabaseConnector
 import psycopg2
 import logging
+from typing import List, Dict, Union
 
 
 class PostgreSQLConnector(DatabaseConnector):
@@ -22,7 +23,7 @@ class PostgreSQLConnector(DatabaseConnector):
             logging.error(f'Failed to close the database connection: {e}.')
             raise
 
-    def create(self, table, data):
+    def create(self, table: str, data: Dict) -> None:
         """
         Inserts a new record into the specified table.
         
@@ -96,7 +97,7 @@ class PostgreSQLConnector(DatabaseConnector):
         return self.format_output(results, column_names, output_format) # format the output based on the specified format
 
 
-    def update(self, table, filters, data):
+    def update(self, table: str, filters: Dict, data: Dict) -> None:
         """
         Updates records in the specified table.
         
@@ -123,7 +124,7 @@ class PostgreSQLConnector(DatabaseConnector):
             self.connection.rollback()
             raise
         
-    def delete(self, table, filters):
+    def delete(self, table: str, filters: Dict) -> None:
         """
         Deletes records from the specified table.
         
