@@ -1,5 +1,6 @@
 from .base import DatabaseConnector
 import pyodbc
+from typing import List, Dict, Union
 
 
 class MsSQLConnector(DatabaseConnector):
@@ -11,7 +12,7 @@ class MsSQLConnector(DatabaseConnector):
         """Closes the connection to the database."""
         self.connection.close()
 
-    def create(self, table, data):
+    def create(self, table: str, data: Dict) -> None:
         """
         Inserts a new record into the specified table.
         
@@ -21,11 +22,7 @@ class MsSQLConnector(DatabaseConnector):
             Name of the table to insert into.
         data : dict
             Dictionary of column names and values to insert.
-        
-        Returns
-        -------
-        results : list
-            List of records from the specified table."""
+        """
         cursor = self.connection.cursor()
         columns = ', '.join(data.keys())
         placeholders = ', '.join(['?'] * len(data))
@@ -34,7 +31,7 @@ class MsSQLConnector(DatabaseConnector):
         self.connection.commit()
         cursor.close()
     
-    def read(self, table, filters):
+    def read(self, table: str, filters: Dict) -> List:
         """
         Reads records from the specified table.
         
@@ -59,7 +56,7 @@ class MsSQLConnector(DatabaseConnector):
         cursor.close()
         return results
     
-    def update(self, table, filters, data):
+    def update(self, table: str, filters: Dict, data: Dict) -> None:
         """
         Updates records in the specified table.
         
@@ -71,11 +68,6 @@ class MsSQLConnector(DatabaseConnector):
             Dictionary of column names and values to filter the records by.
         data : dict
             Dictionary of column names and values to update.
-        
-        Returns
-        -------
-        results : list
-            List of records from the specified table.
         """
         cursor = self.connection.cursor()
         columns = ', '.join(data.keys())
@@ -86,7 +78,7 @@ class MsSQLConnector(DatabaseConnector):
         self.connection.commit()
         cursor.close()
         
-    def delete(self, table, filters):
+    def delete(self, table: str, filters: Dict) -> None:
         """
         Deletes records from the specified table.
         
