@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import pandas as pd
 import polars as pl
 import pyarrow as pa
+from types import List, Dict, Union
 
 
 class DatabaseConnector(ABC):
@@ -42,7 +43,7 @@ class DatabaseConnector(ABC):
     def list_tables(self):
         raise NotImplementedError
 
-    def format_output(self, results, column_names, output_format):
+    def format_output(self, results: List, column_names: List[str], output_format: str):
         """
         Formats the output of a query.
         
@@ -67,7 +68,7 @@ class DatabaseConnector(ABC):
         else:
             raise ValueError(f"Invalid output_format: {output_format}")
 
-    def format_dataframe(self, results, column_names):
+    def format_dataframe(self, results: List, column_names: List[str]) -> pd.DataFrame:
         """
         Formats the output of a query as a pandas DataFrame.
         
@@ -85,7 +86,7 @@ class DatabaseConnector(ABC):
         """
         return pd.DataFrame(results, columns=column_names)
 
-    def format_dict(self, results, column_names):
+    def format_dict(self, results: List, column_names: List[str]) -> List[Dict]:
         """
         Formats the output of a query as a list of dictionaries.
         
@@ -103,7 +104,7 @@ class DatabaseConnector(ABC):
         """
         return [dict(zip(column_names, row)) for row in results]
 
-    def format_polars(self, results, column_names):
+    def format_polars(self, results: List, column_names: List[str]) -> pl.DataFrame:
         """
         Formats the output of a query as a polars DataFrame.
         
@@ -121,7 +122,7 @@ class DatabaseConnector(ABC):
         """
         return pl.DataFrame({col: [row[i] for row in results] for i, col in enumerate(column_names)})
 
-    def format_arrow(self, results, column_names):
+    def format_arrow(self, results: List, column_names: List[str]) -> pa.Table:
         """
         Formats the output of a query as an arrow Table.
         
