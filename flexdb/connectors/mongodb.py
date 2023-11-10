@@ -1,5 +1,6 @@
 from .base import DatabaseConnector
 from pymongo import MongoClient
+from typing import List, Dict, Union
 
 
 class MongoDbConnector(DatabaseConnector):
@@ -11,7 +12,7 @@ class MongoDbConnector(DatabaseConnector):
         """Closes the connection to the database."""
         self.connection.close()
 
-    def create(self, collection, data):
+    def create(self, collection, data) -> str:
         """
         :param collection: collection name
         :param data: dict of data
@@ -28,7 +29,7 @@ class MongoDbConnector(DatabaseConnector):
         result = coll.insert_one(data)
         return result.inserted_id
 
-    def read(self, collection, filters):
+    def read(self, collection, filters: Dict[str, Union[str, int]]) -> List[Dict[str, Union[str, int]]]:
         """
         :param collection: collection name
         :param filters: dict of filters
@@ -45,7 +46,7 @@ class MongoDbConnector(DatabaseConnector):
         result = coll.find(filters) # you can also use coll.find_one(filters) to get only one document
         return list(result)
 
-    def update(self, collection, filters, data):
+    def update(self, collection, filters: Dict, data: Dict) -> int:
         """
         :param collection: collection name
         :param filters: dict of filters
@@ -62,7 +63,7 @@ class MongoDbConnector(DatabaseConnector):
         result = coll.update_one(filters, {'$set': data})
         return result.modified_count
 
-    def delete(self, collection, filters):
+    def delete(self, collection, filters: Dict) -> int:
         """
         :param collection: collection name
         :param filters: dict of filters
