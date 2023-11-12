@@ -1,5 +1,6 @@
 from .base import DatabaseConnector
 import oracledb
+from typing import List, Dict, Union
 
 
 class OracleConnector(DatabaseConnector):
@@ -12,7 +13,7 @@ class OracleConnector(DatabaseConnector):
         """Closes the connection to the database."""
         self.connection.close()
     
-    def create(self, table, data):
+    def create(self, table: str, data: Dict) -> None:
         """
         Inserts a new record into the specified table.
         
@@ -31,7 +32,7 @@ class OracleConnector(DatabaseConnector):
         self.connection.commit()
         cursor.close()
 
-    def read(self, table, filters):
+    def read(self, table: str, filters: Dict) -> List:
         """
         Reads records from the specified table.
         
@@ -50,7 +51,7 @@ class OracleConnector(DatabaseConnector):
         cursor.close()
         return result
 
-    def update(self, table, filters, data):
+    def update(self, table: str, filters: Dict, data: Dict) -> None:
         """
         Updates records in the specified table.
         
@@ -72,7 +73,7 @@ class OracleConnector(DatabaseConnector):
         self.connection.commit()
         cursor.close()
 
-    def delete(self, table, filters):
+    def delete(self, table: str, filters: Dict) -> None:
         """
         Deletes records from the specified table.
         
