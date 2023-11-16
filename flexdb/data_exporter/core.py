@@ -4,6 +4,7 @@ import pyarrow as pa
 import logging
 from datetime import datetime, date
 from decimal import Decimal
+from typing import List, Dict, Union
 
 class DataExporter:
     def __init__(self) -> None:
@@ -13,7 +14,7 @@ class DataExporter:
             "excel": self.to_excel,
         }
 
-    def export_data(self, data, format_type, filename, **kwargs):
+    def export_data(self, data, format_type: str, filename: str, **kwargs):
         """
         :param data: list of dicts, pandas dataframe, or pyarrow table
         :param format_type: json, csv, or excel
@@ -27,7 +28,7 @@ class DataExporter:
             logging.error(f"Format {format_type} not supported.")
             return None
 
-    def to_json(self, data, filename):
+    def to_json(self, data, filename: str):
         """
         :param data: list of dicts, pandas dataframe, or pyarrow table
         :param filename: filename to save to
@@ -52,7 +53,7 @@ class DataExporter:
         except Exception as e:
             logging.error(f"An error occurred while exporting to JSON: {e}")
 
-    def to_csv(self, data, filename):
+    def to_csv(self, data, filename: str):
         """
         :param data: list of dicts, pandas dataframe, or pyarrow table
         :param filename: filename to save to
@@ -64,7 +65,7 @@ class DataExporter:
         except Exception as e:  # Adjusted from PandasError as it's not specific enough
             logging.error(f"An error occurred while exporting to CSV: {e}")
 
-    def to_excel(self, data, filename):
+    def to_excel(self, data, filename: str):
         """
         :param data: list of dicts, pandas dataframe, or pyarrow table
         :param filename: filename to save to
