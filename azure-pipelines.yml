@@ -39,9 +39,9 @@ steps:
 - script: |
     pip install pytest pytest-azurepipelines
     pytest
-    # export POSTGRES_HOST=$(POSTGRES_HOST)
-    # export POSTGRES_DB=$(POSTGRES_DB)
-    # export POSTGRES_USER=$(POSTGRES_USER)
+    export POSTGRES_HOST=$(POSTGRES_HOST)
+    export POSTGRES_DB=$(POSTGRES_DB)
+    export POSTGRES_USER=$(POSTGRES_USER)
   env:
     ACCESS_TOKEN: $(ACCESS_TOKEN)
   displayName: 'pytest'
