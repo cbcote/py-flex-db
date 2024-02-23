@@ -1,5 +1,6 @@
 from .base import DatabaseConnector
 import mysql.connector
+from typing import List, Dict, Union
 
 
 class MySQLConnector(DatabaseConnector):
@@ -11,7 +12,7 @@ class MySQLConnector(DatabaseConnector):
         """Closes the connection to the database."""
         self.connection.close()
     
-    def create(self, table, data):
+    def create(self, table: str, data: Dict) -> None:
         """
         Inserts a new record into the specified table.
         
@@ -30,7 +31,7 @@ class MySQLConnector(DatabaseConnector):
         self.connection.commit()
         cursor.close()
     
-    def read(self, table, filters):
+    def read(self, table: str, filters: Dict) -> List:
         """
         Reads records from the specified table.
         
@@ -55,7 +56,7 @@ class MySQLConnector(DatabaseConnector):
         cursor.close()
         return results
     
-    def update(self, table, filters, data):
+    def update(self, table: str, filters, data):
         cursor = self.connection.cursor()
         columns = ', '.join(data.keys())
         placeholders = ', '.join(['%s'] * len(data))
